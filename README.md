@@ -145,22 +145,42 @@ Aturan mainnya:
 
 ---
 
-### 📋 Template Prompt 3: Bangun Project Baru dari Nol (Zero-to-Hero Pipeline)
-Gunakan saat mau bikin ide aplikasi baru agar AI otomatis bekerja dalam 4 tahap teratur (PRD ➡️ Frontend ➡️ Backend ➡️ QA):
+### 👑 Template Prompt 4: MASTER 1-SHOT (Langsung 90% Beres, UI/UX Akurat Mobile/Desktop)
+Gunakan prompt ini saat lu mau langsung sekali tembak menghasilkan **fullstack MVP utuh** dengan layout presisi tinggi, responsive mobile/desktop, dan arsitektur rapi:
 
 ```text
-Bro, gw punya ide mau bikin produk baru: [JELASKAN IDE LU SECARA SANTAI DI SINI].
+Bro, tolong bangun project baru dari nol secara END-TO-END (target 90% production-ready):
+PRODUK: [JELASKAN DETAIL PRODUK, MISAL: Aplikasi POS Kafe / Dashboard CRM / SaaS Invoice]
 
-Jadikan repo https://github.com/pranatapramudya/nextjs-fundamental-sop sebagai STANDAR ARSITEKTUR KITA.
+Jadikan repo https://github.com/pranatapramudya/nextjs-fundamental-sop sebagai ACUAN ARSITEKTUR KITA.
 
-Kita akan kerja teratur pakai 4 FASE (JANGAN langsung loncat koding semuanya sekaligus):
-1. FASE 1 (PRD & DATA): Buatin dulu Mini-PRD 1 halaman (target user, 3 fitur utama MVP, skema tabel database, dan denah rute). Tunggu persetujuan gw dulu!
-2. FASE 2 (FRONTEND FIRST): Setelah PRD fix, bangun UI/UX dan halaman Next.js pakai dummy data dulu (patuhi Koki vs Pelayan, loading.tsx, error.tsx).
-3. FASE 3 (BACKEND ENGINE): Sambungkan Server Actions, Database Prisma/Neon, dan Clerk Auth.
-4. FASE 4 (QA TESTER): Validasi typecheck npx tsc --noEmit, uji error state, dan siapin deployment.
+Berikut KONTRAK WAJIB yang harus lu selesaikan sekaligus:
 
-Mulai dari FASE 1 dulu: Tolong rumuskan ide gw di atas jadi Mini-PRD yang tajam!
+1. 🎨 KONTRAK UI/UX & RESPONSIVE (PRESISI TINGGI):
+   - Gunakan tema Default Clean Light Mode (Background #f8fafc, Card #ffffff dengan border #e2e8f0, Teks #0f172a, Font Plus Jakarta Sans).
+   - DESKTOP (>= 1024px): Layout Sidebar fixed di kiri, Main content grid simetris 2-4 kolom, aksi cepat terlihat jelas.
+   - MOBILE (< 640px): 100% thumb-friendly, navigasi bawah (bottom navigation bar) atau collapsible menu, kartu full-width 1 kolom, font adaptif clamp(), tombol aksi minimal tinggi 44px agar mudah dipencet jempol.
+   - DILARANG menggunakan elemen mentah atau placeholder rusak. Semua form, modal, badge status, dan tabel harus rapi dan presisi.
+
+2. 👨‍🍳 KONTRAK ARSITEKTUR NEXT.JS (KOKI VS PELAYAN):
+   - page.tsx WAJIB murni Server Component (Koki) yang fetching data awal di server (Prisma/DB).
+   - Dorong 'use client' ke komponen anak (Pelayan) khusus yang punya event onClick, onChange, atau state form modal.
+   - Buatkan file loading.tsx (skeleton shimmer yang pas dengan layout) dan error.tsx (dengan tombol reset) di rute-rute utama.
+   - Form input WAJIB menggunakan Server Actions ('use server') dengan auto-refresh revalidatePath() atau router.refresh().
+
+3. 🛡️ KONTRAK DATABASE & KEAMANAN:
+   - Buatkan skema database Prisma/SQLite yang masuk akal dengan relasi CRUD lengkap.
+   - Sentralisasikan semua env ke src/config/env.ts dengan Booting Crash Guard.
+   - Parameter SQL wajib terproteksi (Prepared Statement).
+
+4. 🚀 TUGAS EKSEKUSI LU:
+   - Jalankan proses dari inisialisasi, setup folder, pembuatan UI responsive, koneksi Server Actions, hingga loading/error boundary.
+   - Pastikan lulus type-check: npx tsc --noEmit (0 error).
+   - Laporkan hasil akhir: URL rute yang bisa dibuka, dan 10% sisa yang perlu gw sambungin manual (misal API Key payment / auth asli).
+
+Langsung eksekusi 90% aplikasi ini sekarang bro!
 ```
+
 
 
 
