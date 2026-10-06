@@ -143,4 +143,24 @@ Aturan mainnya:
 4. Audit kodenya dan laporkan temuan lu sebelum mulai refactor.
 ```
 
+---
+
+### 📋 Template Prompt 3: Bangun Project Baru dari Nol (Zero-to-Hero Pipeline)
+Gunakan saat mau bikin ide aplikasi baru agar AI otomatis bekerja dalam 4 tahap teratur (PRD ➡️ Frontend ➡️ Backend ➡️ QA):
+
+```text
+Bro, gw punya ide mau bikin produk baru: [JELASKAN IDE LU SECARA SANTAI DI SINI].
+
+Jadikan repo https://github.com/pranatapramudya/nextjs-fundamental-sop sebagai STANDAR ARSITEKTUR KITA.
+
+Kita akan kerja teratur pakai 4 FASE (JANGAN langsung loncat koding semuanya sekaligus):
+1. FASE 1 (PRD & DATA): Buatin dulu Mini-PRD 1 halaman (target user, 3 fitur utama MVP, skema tabel database, dan denah rute). Tunggu persetujuan gw dulu!
+2. FASE 2 (FRONTEND FIRST): Setelah PRD fix, bangun UI/UX dan halaman Next.js pakai dummy data dulu (patuhi Koki vs Pelayan, loading.tsx, error.tsx).
+3. FASE 3 (BACKEND ENGINE): Sambungkan Server Actions, Database Prisma/Neon, dan Clerk Auth.
+4. FASE 4 (QA TESTER): Validasi typecheck npx tsc --noEmit, uji error state, dan siapin deployment.
+
+Mulai dari FASE 1 dulu: Tolong rumuskan ide gw di atas jadi Mini-PRD yang tajam!
+```
+
+
 
