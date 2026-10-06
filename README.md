@@ -99,9 +99,16 @@ Biar lu punya pondasi baja dari **Frontend, Backend, sampai Security (Fullstack)
 
 ---
 
-## 🤖 Template Prompt Perintah AI / Hermes (Untuk Audit Project Lain)
+## 🤖 PANDUAN DUA DUNIA: PILIH TEMPLATE AUDIT SESUAI JENIS PROJECT
 
-Simpan dan gunakan template ini setiap kali mau menerapkan SOP ke project lain di `D:\Coding`:
+Repo ini sekarang memiliki **Dua Pilar SOP Lengkap**:
+1. **SOP 1: Next.js Fullstack Web (Filosofi Restoran Padang)** ➡️ Untuk project yang ada web/browser (`kasir-umkm`, `sim-trading`).
+2. **SOP 2: Backend Automation & Bot (Filosofi Pabrik Robot)** ➡️ Untuk project robot, cron, scraper, dan bot (`pjtech-autonomous`, `one-sales-man`). Dokumen lengkap: [`11-backend-automation-resilience/BELAJAR.md`](./11-backend-automation-resilience/BELAJAR.md).
+
+---
+
+### 📋 Template Prompt 1: Untuk Web Next.js (App Router)
+Gunakan untuk: `kasir-umkm`, `sim-trading`, dll.
 
 ```text
 Bro, tolong buka project [NAMA_FOLDER_PROJECT]. Sebelum lu nulis atau ubah kode apa pun, jadikan repo https://github.com/pranatapramudya/nextjs-fundamental-sop sebagai STANDAR ARSITEKTUR WAJIB (SOP) kita.
@@ -116,4 +123,24 @@ Aturan mainnya:
 3. ⚠️ SYARAT MUTLAK: JANGAN ubah UI/UX, warna, form, atau fitur bisnis [NAMA_FOLDER_PROJECT] sedikit pun! Ubah cuma arsitektur di balik layarnya biar sesuai SOP.
 4. Audit dulu kodenya dan kasih tau gw apa temuan lu sebelum mulai refactor.
 ```
+
+---
+
+### 📋 Template Prompt 2: Untuk Backend Murni / Bot / Automation (Pabrik Robot)
+Gunakan untuk: `pjtech-autonomous`, `one-sales-man`, `auto-apply-agent` (worker).
+
+```text
+Bro, tolong buka project [NAMA_FOLDER_PROJECT]. Ini adalah project Backend Murni / Automation Bot. Sebelum lu ubah apa pun, jadikan SOP Pabrik Robot dari repo https://github.com/pranatapramudya/nextjs-fundamental-sop (Modul 11) sebagai STANDAR ARSITEKTUR KITA.
+
+Aturan mainnya:
+1. Bikin branch baru dulu: git checkout -b refactor/audit-sop (jangan sentuh main).
+2. Terapkan 4 Pilar Pabrik Robot:
+   - Sentralisasi semua process.env ke src/config/env.ts dengan Booting Crash Guard.
+   - Pasang try-catch ISOLATION di DALAM loop iterasi/batch (kalau 1 target gagal, target lain TETAP lanjut jalan).
+   - Rapikan struktur folder 3 pilar: src/config/, src/services/, dan src/handlers/.
+   - Pastikan ada rate limiter/delay dan watchdog (polling_error) biar bot gak kena blokir atau mati suri.
+3. ⚠️ SYARAT MUTLAK: JANGAN ubah logika bisnis, alur pengiriman pesan, atau fungsi utama bot sedikit pun!
+4. Audit kodenya dan laporkan temuan lu sebelum mulai refactor.
+```
+
 
