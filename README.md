@@ -96,3 +96,24 @@ Biar lu punya pondasi baja dari **Frontend, Backend, sampai Security (Fullstack)
 
 🎉 **SELURUH 10 MODUL RESMI DITAMATKAN 100%!** 🎉  
 🏆 **SELAMAT! LU RESMI JADI FULLSTACK NEXT.JS ENGINEER DENGAN PONDASI BAJA!** 🏆
+
+---
+
+## 🤖 Template Prompt Perintah AI / Hermes (Untuk Audit Project Lain)
+
+Simpan dan gunakan template ini setiap kali mau menerapkan SOP ke project lain di `D:\Coding`:
+
+```text
+Bro, tolong buka project [NAMA_FOLDER_PROJECT]. Sebelum lu nulis atau ubah kode apa pun, jadikan repo https://github.com/pranatapramudya/nextjs-fundamental-sop sebagai STANDAR ARSITEKTUR WAJIB (SOP) kita.
+
+Aturan mainnya:
+1. Bikin branch baru dulu: git checkout -b refactor/audit-sop (jangan sentuh main).
+2. Terapkan filosofi dari SOP:
+   - page.tsx wajib jadi Koki (Server Component).
+   - Dorong 'use client' ke komponen kecil (Client Component/Pelayan) hanya jika ada interaksi klik/input.
+   - Data fetching di server, oper ke client via props/fallbackData.
+   - Setiap rute penting wajib ada loading.tsx dan error.tsx.
+3. ⚠️ SYARAT MUTLAK: JANGAN ubah UI/UX, warna, form, atau fitur bisnis [NAMA_FOLDER_PROJECT] sedikit pun! Ubah cuma arsitektur di balik layarnya biar sesuai SOP.
+4. Audit dulu kodenya dan kasih tau gw apa temuan lu sebelum mulai refactor.
+```
+
