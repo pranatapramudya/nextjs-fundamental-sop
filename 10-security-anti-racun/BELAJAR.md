@@ -1,61 +1,182 @@
 # Modul 10: Sertifikasi Higienis & Anti Racun (Security & Best Practice di Next.js)
 
-Selamat datang di **BOSS TERAKHIR KURIKULUM**: Security & Best Practice Industri! 🛡️🏰
+Selamat datang di **STANDAR KEAMANAN PRODUKSI NEXT.JS**! 🛡️🏰
 
-Restoran Padang kita sekarang udah viral, punya cabang di mana-mana, dan omset milyaran.  
-Tapi semakin gede sebuah restoran, semakin banyak **Hacker Jahil & Pesaing Curang** yang nyoba ngeracun:
-1. Nyoba masukin racun tikus ke piring rendang (**XSS - Cross Site Scripting**).
-2. Nyoba ngebom kulkas pakai mantra palsu (**SQL Injection**).
-3. Nyoba ngintip brankas rahasia dari jendela depan (**Bocor Environment Variables / API Key**).
+Restoran Padang & Aplikasi SaaS kita sekarang sudah multi-cabang, menangani ribuan transaksi dan omset milyaran.  
+Semakin besar sebuah aplikasi, semakin berbahaya celah keamanan yang mengintai:
 
-Berikut adalah **3 Pilar Pertahanan Baja** di Next.js:
+1. Hacker menembak Server Action lewat cURL/Postman tanpa login (**Bypass Auth Action**).
+2. Hacker menginput karakter SQL / payload berbahaya (**Dirty Input Injection**).
+3. Cabang Bandung mencoba melihat atau menghapus pesanan milik Cabang Jakarta (**IDOR & Tenant Data Leak**).
+4. Kode rahasia backend/database ter-import ke browser pelanggan (**Bundle Leakage**).
+5. Script jahat di browser mencuri token sesi login (**Session Hijacking via XSS**).
 
----
-
-## 1. Brankas Tertutup: `.env.local` & Aturan Prefiks `NEXT_PUBLIC_`
-
-Di Next.js, rahasia negara (Database URL, Stripe Secret Key, Token Bank) disimpen di file **`.env.local`**.
-
-### 🔒 ATURAN EMAS NEXT.JS YANG WAJIB DIHAFAL:
-- **Variabel Biasa (HANYA UNTUK KOKI DI SERVER):**
-  ```env
-  DATABASE_SECRET=kunci_rahasia_banget_123
-  ```
-  Ini **TIDAK AKAN PERNAH** bisa dibaca oleh Client/Browser. Aman 100%!
-- **Variabel Umum (DIKIRIM KE MEJA PELANGGAN):**
-  ```env
-  NEXT_PUBLIC_NAMA_RESTORAN="Padang Minang Express"
-  ```
-  Harus diawali kata `NEXT_PUBLIC_`. Kalau lu gak pake awalan ini, browser gak bakal bisa ngeliat nilainya.
-  > ⚠️ **HATI-HATI:** Jangan pernah namain `NEXT_PUBLIC_SECRET_KEY`! Itu sama aja lu nempelin password brankas di jidat pelayan meja!
+Berikut adalah **Panduan Lengkap Praktek A - C** yang sudah diuji coba di halaman `/laboratorium-security`.
 
 ---
 
-## 2. Anti Racun Makanan: XSS (Cross-Site Scripting)
+## 🔒 PRAKTEK A: Server Action Guard & Validasi Input Zod
 
-Apa itu XSS? Bayangin ada orang jahat nulis form nama masakan dengan teks:
-`<script>curiCookiePelangganLain()</script>`
+Banyak pemula salah kaprah mengira *Server Action* itu private. **Faktanya:** Server Action adalah endpoint HTTP POST publik yang diberi hash!
 
-Di framework kuno atau PHP jaman purba, script itu bisa dieksekusi di browser pelanggan lain dan nyuri stempel login mereka.
-
-### 🛡️ Tameng Next.js / React:
-React dan Next.js punya sistem **Auto-Escaping** bawaan. Semua teks di dalam `{item.nama}` otomatis diubah jadi teks polos biasa, bukan kode yang bisa dieksekusi.  
-> ⚠️ **PANTANGAN:** Jangan pernah pake `dangerouslySetInnerHTML` kecuali lu bener-bener tau apa yang lu lakuin!
-
----
-
-## 3. Anti Bom Kulkas: SQL Injection & Prepared Statements
-
-Kalau ada hacker ngetik nama menu:
-`Rendang'); DROP TABLE menu_padang; --`
-
-Kalau lu nulis query SQL pake sambungan string:
-`"INSERT INTO menu_padang (nama) VALUES ('" + nama + "')"` ➡️ **TABEL LU LANGSUNG MUSNAH HANCUR TOTAL!**
-
-### 🛡️ Solusi Kita di Modul 8: Prepared Statements
-Kita pake parameter tanda tanya `?`:
+### 1. Wajib Auth Guard di Baris Pertama Action
 ```ts
-const stmt = db.prepare("INSERT INTO menu_padang (nama) VALUES (?)");
-stmt.run(nama); // 👈 Nilai nama diperlakukan murni sebagai teks, bukan query SQL!
+"use server";
+
+export async function simpanTransaksi(formData: FormData) {
+  // 🛑 1. CEK AUTH DULU! JANGAN BIARKAN HACKER EKSEKUSI KODE DI BAWAHNYA
+  const session = await getSessionServer();
+  if (!session) {
+    return { success: false, error: "⛔ Akses Ditolak: Anda belum login!" };
+  }
+  
+  // ... lanjut proses
+}
 ```
-Hacker mau ngetik mantra SQL seaneh apapun, database tetap menganggapnya sebagai nama masakan biasa. Kulkas aman dari ledakan!
+
+### 2. Validasi & Sanitasi Mutlak dengan Zod
+Jangan pernah percaya string kiriman form:
+```ts
+import { z } from "zod";
+
+const TransaksiSchema = z.object({
+  namaPelanggan: z
+    .string()
+    .min(3, "Nama minimal 3 huruf!")
+    .max(50, "Nama terlalu panjang!")
+    .regex(/^[a-zA-Z0-9\s.,'-]+$/, "Karakter tidak diizinkan!"),
+  total: z.number().int().positive().max(100_000_000),
+});
+
+export async function simpanTransaksi(formData: FormData) {
+  const validation = TransaksiSchema.safeParse({
+    namaPelanggan: formData.get("namaPelanggan"),
+    total: Number(formData.get("total")),
+  });
+
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message };
+  }
+
+  const { namaPelanggan, total } = validation.data; // ✅ Bersih & Type-safe!
+}
+```
+
+---
+
+## 🏢 PRAKTEK B: Multi-Tenant Isolation & Anti-IDOR (Insecure Direct Object Reference)
+
+### 1. Masalah Kebocoran Data Antar Usaha (IDOR)
+Jika Anda menulis query hapus/update seperti ini:
+```sql
+-- ❌ BAHAYA BESAR:
+DELETE FROM pesanan WHERE id = 15;
+```
+Jika order #15 milik Toko A, tapi Toko B yang mengirim request hapus, **data Toko A akan terhapus!**
+
+### 2. Solusi: Selalu Kunci dengan `tenant_id` dari Sesi Resmi
+```ts
+export async function batalkanPesanan(orderId: number) {
+  const session = await getSessionServer(); // Ambil dari session terverifikasi
+  
+  // ✅ WAJIB DIKUNCI GANDA: ID Pesanan + Tenant ID
+  const stmt = db.prepare(
+    "DELETE FROM pesanan_cabang WHERE id = ? AND tenant_id = ?"
+  );
+  const result = stmt.run(orderId, session.tenantId);
+
+  if (result.changes === 0) {
+    return { success: false, error: "Pesanan tidak ditemukan atau bukan milik cabang Anda!" };
+  }
+}
+```
+
+### 3. Tameng Resmi: Package `import 'server-only'`
+Untuk memastikan file koneksi database atau kunci enkripsi tidak pernah bocor ke JavaScript browser:
+```ts
+// Letakkan di baris paling atas lib/db.ts:
+import "server-only";
+```
+Jika tidak sengaja di-import di komponen `"use client"`, Next.js langsung menggagalkan build saat itu juga!
+
+---
+
+## 🍪 PRAKTEK C: HttpOnly Cookie vs LocalStorage
+
+| Aspek | LocalStorage | HttpOnly Cookie (Standar Next.js) |
+|---|---|---|
+| **Bisa dibaca via JavaScript?** | ✅ Ya (`localStorage.getItem()`) | ❌ **TIDAK BISA** (`document.cookie` kosong) |
+| **Kebal Pencurian Script XSS?** | ❌ Sangat Rentan! Script jahat bisa curi token | 🛡️ **KEBAL 100%!** Browser melindungi cookie |
+| **Kirim Otomatis ke Server?** | ❌ Manual lewat header `Bearer` | ✅ Otomatis dikirim oleh browser di setiap request |
+
+### Cara Set Cookie Aman di Next.js:
+```ts
+import { cookies } from "next/headers";
+
+const cookieStore = await cookies();
+cookieStore.set("auth_session", tokenJwt, {
+  httpOnly: true, // 🔒 Melarang JavaScript membaca cookie
+  secure: process.env.NODE_ENV === "production", // Wajib HTTPS di production
+  sameSite: "lax", // Perlindungan dari serangan CSRF
+  maxAge: 60 * 60 * 24, // 1 Hari
+  path: "/",
+});
+```
+
+---
+
+## ⏱️ PRAKTEK 0: Rate Limiting & Anti-Brute Force (HTTP 429)
+
+Apa yang terjadi kalau ada bot/hacker yang nembak API login atau pembayaran 100 kali dalam 1 detik? Server bisa down atau saldo SMS OTP ludes!
+
+### 1. Algoritma Sliding Window / Token Bucket In-Memory (`lib/rate-limit.ts`)
+Setiap IP pengirim dicatat frekuensi tembakannya dalam kurun waktu tertentu:
+```ts
+// Maksimal 3 request per rentang waktu 10 detik (10.000 ms)
+const limiter = rateLimit(ip, 3, 10000);
+
+if (!limiter.success) {
+  return NextResponse.json(
+    { message: "⛔ 429 TOO MANY REQUESTS: Coba lagi nanti!" },
+    { status: 429 }
+  );
+}
+```
+
+---
+
+## 💻 PRAKTEK TERMINAL: Lab Simulasi Penyerangan (cURL)
+
+Endpoint target interaktif: `http://localhost:3005/api/security-target`
+
+### 1. Uji Rate Limiter (Spam Bom 4x Berturut-turut):
+```powershell
+curl.exe -X POST http://localhost:3005/api/security-target -H "Content-Type: application/json" -d '{\"orderId\": 1}'
+```
+👉 Tembakan ke-4 langsung dihadang dengan **HTTP 429 Too Many Requests**!
+
+### 2. Uji Auth Guard (Tanpa Sesi):
+👉 Ditolak dengan **HTTP 401 Unauthorized**!
+
+### 3. Uji Zod (Payload Rusak Angka Negatif):
+```powershell
+curl.exe -X POST http://localhost:3005/api/security-target -H "Content-Type: application/json" -H 'Cookie: auth_session={\"userId\":\"user-jakarta\",\"tenantId\":\"cabang-jakarta\",\"role\":\"KASIR\"}' -d '{\"orderId\": -99}'
+```
+👉 Ditolak Zod dengan **HTTP 422 Unprocessable Entity**!
+
+### 4. Uji Anti-IDOR (Ordal Bandung Menyerang Data Jakarta):
+```powershell
+curl.exe -X POST http://localhost:3005/api/security-target -H "Content-Type: application/json" -H 'Cookie: auth_session={\"userId\":\"user-bandung\",\"tenantId\":\"cabang-bandung\",\"role\":\"KASIR\"}' -d '{\"orderId\": 1}'
+```
+👉 Ditolak Database dengan **HTTP 403 Forbidden (Data korban aman!)**!
+
+---
+
+## 🧪 Cara Mencoba di Browser (Playground UI)
+
+1. Jalankan `npm run dev` (Port 3005 untuk fundamental).
+2. Buka URL: [http://localhost:3005/laboratorium-security](http://localhost:3005/laboratorium-security)
+3. Coba skenario uji coba:
+   * **Tes C:** Klik tombol *"🧪 Tes Intip document.cookie"* untuk membuktikan bahwa JavaScript browser tidak bisa mencuri cookie sesi.
+   * **Tes A:** Coba kirim pesanan tanpa login ➔ Ditolak oleh Auth Guard! Coba login, lalu input nama 1 huruf ➔ Ditolak oleh Zod!
+   * **Tes B:** Login sebagai Cabang Bandung, lalu coba hapus pesanan #1 (milik Jakarta) ➔ Ditolak oleh perlindungan Anti-IDOR!

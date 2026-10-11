@@ -91,11 +91,16 @@ Biar lu punya pondasi baja dari **Frontend, Backend, sampai Security (Fullstack)
 ### 🔴 TAHAP 3: SECURITY, AUTH & PRODUCTION (Satpam Restoran & Sertifikasi ISO)
 * **✅ Modul 9: Authentication & Middleware (Satpam di Pintu Masuk / VIP Room)**
   - File sakti `middleware.ts` yang mencegat user di pintu terdepan server sebelum sempat render halaman, pengecekan Session Cookie (`httpOnly`), dan redirect otomatis.
-* **✅ Modul 10: Security & Best Practice Industri (Anti Maling & Anti Racun)**
+* **✅ Modul 10: Security & Best Practice Industri (Anti Maling, Anti Racun & Multi-Tenant Isolation)**
   - Rahasia aman via `.env.local` vs `NEXT_PUBLIC_`, Auto-Escaping anti XSS bawaan React, dan anti SQL Injection via Prepared Statements.
+  - **⏱️ Praktek Modern 0 (Rate Limiting & Anti-Brute Force):** Membatasi frekuensi tembakan IP client (Token Bucket / Sliding Window) untuk menangkis bot spammer & serangan DoS dengan respon standar industri `HTTP 429 Too Many Requests`.
+  - **🛡️ Praktek Modern A (Server Action Guard & Zod):** Mengamankan Server Action dari tembakan cURL liar menggunakan Auth Guard di baris pertama dan sanitasi input ketat dengan Zod schema (`HTTP 401 & 422`).
+  - **🏢 Praktek Modern B (Multi-Tenant Isolation & Anti-IDOR):** Mencegah kebocoran data antar cabang/toko (IDOR) dengan mengunci query database wajib `WHERE id = ? AND tenant_id = ?`, serta pengamanan bundle rahasia via package `import 'server-only'` (`HTTP 403`).
+  - **🍪 Praktek Modern C (HttpOnly Cookie vs LocalStorage):** Standar penyimpanan token sesi login yang kebal 100% dari pencurian script browser XSS (`document.cookie` ditolak).
+  - **💻 Terminal Hacking Lab (`/api/security-target`):** Pengujian simulasi serangan nyata dari terminal via `curl.exe` (pembuktian penolakan beruntun: Rate Limiting 429, Tanpa Sesi 401, Payload Rusak 422, dan Ordal IDOR 403).
 
 🎉 **SELURUH 10 MODUL RESMI DITAMATKAN 100%!** 🎉  
-🏆 **SELAMAT! LU RESMI JADI FULLSTACK NEXT.JS ENGINEER DENGAN PONDASI BAJA!** 🏆
+🏆 **SELAMAT! LU RESMI JADI FULLSTACK NEXT.JS ENGINEER DENGAN PONDASI BAJA & SECURITY ENTERPRISE!** 🏆
 
 ---
 

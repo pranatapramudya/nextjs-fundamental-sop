@@ -1,8 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function PelayanCekRahasia() {
-  // Pelayan coba ngintip KUNCI_BRANKAS_DAPUR dan NEXT_PUBLIC_SLOGAN_RESTORAN
-  const kunciDapur = process.env.KUNCI_BRANKAS_DAPUR;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Saat SSR di server, process.env.KUNCI_BRANKAS_DAPUR terbaca oleh Node.js,
+  // tapi saat di bundle ke browser, nilainya undefined.
+  // Gunakan mounted guard untuk mencegah perbedaan teks saat hydration!
+  const kunciDapur = mounted ? process.env.KUNCI_BRANKAS_DAPUR : undefined;
   const sloganPublik = process.env.NEXT_PUBLIC_SLOGAN_RESTORAN;
 
   return (
@@ -27,7 +37,11 @@ export default function PelayanCekRahasia() {
       <p style={{ margin: "0.25rem 0" }}>
         🔒 <strong>Kunci Rahasia Dapur:</strong>{" "}
         <span style={{ color: "#dc2626", fontWeight: "bold" }}>
-          {kunciDapur ? kunciDapur : "[KOSONG / UNDEFINED] (Browser DILARANG NGINTIP!)"}
+          {!mounted
+            ? "[KOSONG / UNDEFINED] (Browser DILARANG NGINTIP!)"
+            : kunciDapur
+              ? kunciDapur
+              : "[KOSONG / UNDEFINED] (Browser DILARANG NGINTIP!)"}
         </span>
       </p>
       <small style={{ color: "#64748b" }}>
