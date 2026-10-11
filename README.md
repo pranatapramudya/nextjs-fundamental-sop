@@ -185,7 +185,10 @@ Berikut KONTRAK WAJIB yang harus lu selesaikan sekaligus:
 
 Langsung eksekusi 90% aplikasi ini sekarang bro!
 ```
+---
 
+## 🏛️ Ekosistem Produk & Standalone Repositories
 
-
+Project fundamental ini melahirkan tool arsitektur mandiri:
+* **⚡ Pranajaya Architect (`pranajaya-architect`):** Engine generator PRD teknis 1-shot berbasis SOP Next.js ini telah dipisahkan menjadi standalone repository di `D:\Coding\pranajaya-architect` untuk deployment Vercel terpisah dan pengembangan SaaS independen oleh **Pranajaya Tech**.
 
