@@ -99,7 +99,14 @@ Biar lu punya pondasi baja dari **Frontend, Backend, sampai Security (Fullstack)
   - **🍪 Praktek Modern C (HttpOnly Cookie vs LocalStorage):** Standar penyimpanan token sesi login yang kebal 100% dari pencurian script browser XSS (`document.cookie` ditolak).
   - **💻 Terminal Hacking Lab (`/api/security-target`):** Pengujian simulasi serangan nyata dari terminal via `curl.exe` (pembuktian penolakan beruntun: Rate Limiting 429, Tanpa Sesi 401, Payload Rusak 422, dan Ordal IDOR 403).
 
-🎉 **SELURUH 10 MODUL RESMI DITAMATKAN 100%!** 🎉  
+🎉 *** **👑 Modul 14: Meja VIP & Kasir Khusus (Multi-Role RBAC & Row-Level Security)**
+    - Pemisahan kasta: Owner vs Manager vs Kasir/Mekanik.
+    - Server Guard (`requireRole(['OWNER'])`) di Server Component & Server Action.
+    - Row-Level Security & Anti-IDOR: data cabang terisolasi total.
+    - Dokumen lengkap: [`14-rbac-meja-vip-kasir/README.md`](./14-rbac-meja-vip-kasir/README.md).
+
+  ---  
+  SELURUH 10 MODUL RESMI DITAMATKAN 100%!** 🎉  
 🏆 **SELAMAT! LU RESMI JADI FULLSTACK NEXT.JS ENGINEER DENGAN PONDASI BAJA & SECURITY ENTERPRISE!** 🏆
 
 ---
